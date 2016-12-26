@@ -114,3 +114,5 @@ These properties are included in the `loklak` properties file and prefixed with 
 ####Change the Back-End Server
 
 In the properties, there is a line `backend=http://loklak.org`. You can change this to your own server. This name is a prefix for the api path, so adding a port to the host name is possible.
+
+***
