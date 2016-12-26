@@ -14,7 +14,6 @@ The source code is hosted at https://github.com/loklak/loklak_server, you can do
    > cd loklak_server
    > ant
    > bin/start.sh
-
 ```
 After all server processes are running, loklak tries to open a browser page itself. If that does not happen, just open http://localhost:9000; if you made the installation on a headless or remote server, then replace 'localhost' with your server name.
 
@@ -81,4 +80,37 @@ A page with the name "messages" appears and shows all index fields of the `lokla
 
 The remote search to twitter with the twitter scraper is not done using the elasticsearch 'river' method to prevent that a user-frontend like Kibana constantly triggers a remote search. Therefore this search method with kibana will not help to enrich your search index with remote search results. This also means that you won't see any results in Kibana until you searched with the [/api/search.json](http://loklak.org/api.html#search) api.
 
+***
 
+###Use Nginx As Reverse Proxy
+
+If you run `loklak` behind a nginx reverse proxy, it is important to forward the client IP address through the proxy. If you don't do that, `loklak` thinks that all requests come from localhost and are therefore all authorized to do anything with maximum access rights. To configure Nginx to forward the client IP address, add the following line to the server section of your config file:
+
+   `proxy_set_header X-Real-IP $remote_addr;`
+
+The full server section may then look similar to:
+```
+   server {
+     listen 80;
+     server_name myserver.mytld;
+     location / {
+       proxy_pass 127.0.0.1:9000;
+       include /etc/nginx/proxy_params;
+       proxy_set_header X-Real-IP $remote_addr;
+       proxy_set_header Host $host;
+     }
+   }
+```
+***
+
+###Change Config Parameters
+
+The configuration initialization of `loklak` is in `conf/config.properties` but that file may be overwritten if you update the application. To make changes to the configuration persistent, there is another file located at `data/settings``/customized_config.properties` which overwrites the settings during startup time.
+
+####Change Elasticsearch Configuration Properties
+
+These properties are included in the `loklak` properties file and prefixed with the string `elasticsearch`. You can add more elasticsearch properties here, all keys with the prefix "elasticsearch." are send to elasticsearch.
+
+####Change the Back-End Server
+
+In the properties, there is a line `backend=http://loklak.org`. You can change this to your own server. This name is a prefix for the api path, so adding a port to the host name is possible.
