@@ -57,4 +57,28 @@ In case of application bugs, data structure changes or if you change your set-up
 
 ###Use Kibana As Search Front-End
 
+Kibana is a tool to "explore and visualize your data". It is not actually a search front-end but you can use it as such. Because Kibana is made for elasticsearch, it will instantly fit on `loklak` without any modification or configuration. Here is what you need to do:
+
+    * Download Kibana from http://www.elasticsearch.org/overview/kibana/installation/
+    * Open a terminal, cd into the kibana directroy and run bin/kibana on linux or Mac, or bin/kibana.bat on Windows.
+    * open http://localhost:5601
+
+Kibana is pre-configured with default values to attach to an elasticsearch index containing logstash data. We will use a differnt index name than logstash: the `loklak` index names are 'messages' and 'users'. When the Kibana Settings page is visible in your browser, do:
+
+    * On the 'Configure an index pattern' Settings-page of the kibana interface, enter "messages" (without the quotes) in the field "Index name or pattern".
+    * As soon as you typed this in, another field "Time-field name" appears, with a red border and empty. Use the selectbox-arrows on the right side of the empty field to select one entry which is there: "created_at".
+    * Push the 'Create' button.
+
+A page with the name "messages" appears and shows all index fields of the `loklak` messages index. If you want to search the index from Kibana, do:
+
+    * Click on "Discover" in the upper menu bar.
+    * You may probably see a page with the headline "No results found". If your loklak index is not empty, this may be caused by a too tight time range; therefore the next step should solve that:
+    * Click on the time picker in the top right corner of the window and select (i.e.) "This month".
+    * A 'searching' Message appears, followed with a search result page and a histogram at the top.
+    * replace the wild-card symbol '*' in the query input line with a word which you want to search, i.e. 'fossasia'
+    * You can also select a time period using a click-drag over the histogram to narrow the search result.
+    * You can click on the field names on the left border to show a field facet. Click on the '+'-sign at the facet item to activate the facet.
+
+The remote search to twitter with the twitter scraper is not done using the elasticsearch 'river' method to prevent that a user-frontend like Kibana constantly triggers a remote search. Therefore this search method with kibana will not help to enrich your search index with remote search results. This also means that you won't see any results in Kibana until you searched with the [/api/search.json](http://loklak.org/api.html#search) api.
+
 
